@@ -138,7 +138,7 @@ def get_random_words(wordlist, how_many=4):
 def find_intersections(wordlist):
 	"""Znajduje część wspólną w wyrazach podanych poprzez listę i zwraca jako listę."""
 	data = [set(word.lower()) for word in wordlist] # korzystam z listy składanej - zamieniam każdy wyraz na małe litery, przerabiam na zbiór i każdy ze zbiorów wrzucam jako element listy
-	return list(set.intersection(*data)) # zwraca listę zrobioną na podstawie zestawu zrobionego na podstawie rozpakowanej listy
+	return list(set.intersection(*data)) # zwraca listę elementów należących do części wspólnej zbiorów rozpakowanych z listy :)
 
 def do_your_business():
 	path = get_path()
