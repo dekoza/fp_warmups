@@ -131,7 +131,7 @@ class TestWarmup(unittest.TestCase):
 		self.assertListEqual(get_words(test_input, min_length=4, how_many=0), expected_result)
 
 		test_input = "1 ala Aleksandra ma kota h1"
-		self.assertRaises(NotEnoughCorrectWordsError, get_words, words=test_input,length=4, how_many=4)
+		self.assertRaises(NotEnoughCorrectWordsError, get_words, words=test_input,min_length=4, how_many=4)
 
 	def test_get_random_words(self):
 		test_input = ["Ala", 'ma', 'fajnego', 'kota']
