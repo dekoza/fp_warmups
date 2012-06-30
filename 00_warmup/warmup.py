@@ -77,7 +77,7 @@ def get_words(words=None, min_length=4, how_many=4):
 			(potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
 
 def get_random_words(wordlist=None, how_many=4):
-	"""Losuje kilka elementów z listy i zwraca jako listę"""
+	"""Losuje kilka elementów z listy i zwraca jako listę."""
 	if len(wordlist)>=how_many:
 		return random.sample(wordlist,how_many)
 	else:
@@ -88,7 +88,7 @@ def get_random_words(wordlist=None, how_many=4):
 
 
 def find_intersections(wordlist=None):
-	"""Znajduje część wspólną w wyrazach podanych poprzez listę i zwraca jako zbiór"""
+	"""Znajduje część wspólną w wyrazach podanych poprzez listę i zwraca jako listę."""
 	data = [set(word.lower()) for word in wordlist] # korzystam z listy składanej
 	return list(set.intersection(*data)) # zwraca listę zrobioną na podstawie zestawu zrobionego na podstawie rozpakowanej listy
 
