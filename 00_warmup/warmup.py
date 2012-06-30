@@ -9,6 +9,40 @@ Korzysta z wyrażeń regularnych i wyjątków.
 
 Na końcu zaweria unittesty dla najważniejszych funkcji.
 
+SPECYFIKACJA:
+<cytat z oryginalnego mejla>
+Program do zrealizowania jako rozgrzewka / test czy rozumiecie przykład _overarchitectured jest bardzo prosty:
+
+1. Pobiera od użytkownika ścieżkę pliku tekstowego.
+
+2. Pobiera z pliku tekstowego jakieś słowa (np. "Lorem ipsum" - w necie jest wyjaśnienie co to jest Lorem ipsum). Delimiterem (rozdzielnikiem) słów jest spacja.
+
+3. Usuwa wszystkie słowa krótsze niż 4 litery (czyli akceptujemy 4+) i słowa zawierające coś innego niż tylko małe i duże litery alfabetu angielskiego (czyli azAZ). Usuwamy też wszystkie znaki nie będące literami azAZ.
+
+4. Losuje cztery słowa z istniejących.
+
+5. Znajduje część wspólną liter (nieważne czy wielkie czy małe, czyli 'case insensitive'):
+
+"Aniela"
+"Natalia"
+"Anna"
+"Irena"
+
+da nam:
+
+"a", "n", bo to jedyne litery występujące we wszystkich tych słowach (mimo, że w wersjach wielka i mała).
+
+6. Wyświetli wylosowane słowa oraz część wspólną.
+
+Zabezpieczcie się przed:
+
+- możliwościami złośliwości użytkownika (3 słowa w pliku, brak 4 poprawnych słów, niewłaściwe znaki...) i zaraportujcie jeśli plik wejściowy jest niewłaściwy w odpowiedni sposób.
+
+- błędną ścieżką ze strony użytkownika. Znowu, zaraportujcie to jakoś.
+
+Sposób raportowania i wyświetlania jest dowolny, byle był zrozumiały ;-).
+</cytat>
+
 ZNANE BŁĘDY:
 - Wyrazy nie mogą zawierać polskich liter.
 
