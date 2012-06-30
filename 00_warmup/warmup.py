@@ -89,8 +89,8 @@ def get_random_words(wordlist=None, how_many=4):
 
 def find_intersections(wordlist=None):
 	"""Znajduje część wspólną w wyrazach podanych poprzez listę i zwraca jako zbiór"""
-	intersection = [set(word.lower()) for word in wordlist] # korzystam z listy składanej
-	return list(set.intersection(*intersection)) # zwraca listę zrobioną na podstawie zestawu zrobionego na podstawie rozpakowanej listy
+	data = [set(word.lower()) for word in wordlist] # korzystam z listy składanej
+	return list(set.intersection(*data)) # zwraca listę zrobioną na podstawie zestawu zrobionego na podstawie rozpakowanej listy
 
 def do_your_business():
 	path = get_path()
