@@ -2,6 +2,7 @@
 #coding: utf-8
 """Program zrobiony w stylu zbliżonym do overarchitectured.
 Pominięto definicje specjalistycznych typów danych - typy wbudowane w Pythona zupełnie wystarczają.
+Próbowałem zachować jak największą zgodność z Zen Pythona.
 
 Podejście pierwsze.
 
@@ -46,7 +47,7 @@ Sposób raportowania i wyświetlania jest dowolny, byle był zrozumiały ;-).
 ZNANE BŁĘDY:
 - Wyrazy nie mogą zawierać polskich liter.
 
-Jak testować:
+Jak testować z użyciem unittest:
 $ cd /ścieżka/do/katalogu/z/plikiem
 $ python2 -m unittest warmup  # BEZ .py!
 
@@ -96,14 +97,14 @@ def get_path():
 	Wyświetla krótką pomoc jeśli jako parametr podać --help"""
 	if len(sys.argv)>1:
 		if sys.argv[1] == '--help':
-			print "Usage:\n   %s [filename]" % sys.argv[0]
+			print "Usage:\n\t%s [filename]" % sys.argv[0]
 			exit()
 		else:
 			filename = sys.argv[1]
 	else:
 		try:
 			# importuję dopiero tutaj, żeby wygodniej obsłużyć możliwe wyjątki ;)
-			# tzn. może nie być biblioteki Tk lub ekranu graficznego
+			# np. może nie być biblioteki Tk lub ekranu graficznego
 			from Tkinter import Tk
 			from tkFileDialog import askopenfilename
 			Tk().withdraw()
@@ -132,16 +133,14 @@ def get_words(words, min_length=4, how_many=4):
 	if len(result) >= how_many:
 		return result
 	else:
-		raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów \
-			(potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
+		raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów (potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
 
 def get_random_words(wordlist, how_many=4):
 	"""Losuje kilka elementów z listy i zwraca jako listę."""
 	if len(wordlist)>=how_many:
 		return random.sample(wordlist,how_many)
 	else:
-		raise NotEnoughWordsError, "Za mało wyrazów. Potrzeba co najmniej %(needed)d, \
-			otrzymano %(got)d." % {'needed': how_many, 'got': len(wordlist)}
+		raise NotEnoughWordsError, "Za mało wyrazów. Potrzeba co najmniej %(needed)d, otrzymano %(got)d." % {'needed': how_many, 'got': len(wordlist)}
 		# ten wyjątek normalnie nie powinien nigdy zostać zgłoszony w trakcie działania programu
 		# powód jest prosty: zbyt mała liczba wyrazów zostanie wcześniej wyłapana w funkcji get_words :)
 
@@ -198,6 +197,8 @@ class TestWarmup(unittest.TestCase):
 
 		test_input = ["Ala", 'ma', 'fajnego', 'kota']
 		self.assertListEqual(sorted(get_random_words(test_input, how_many=4)), sorted(test_input))
+		# sortowanie obu list jest konieczne ze względu na losową kolejność elementów w wyniku
+		# zamiast tego można by ewentualnie zamienić listy na zbiory i porównać
 
 		test_input = ["Ala", 'ma', 'kota']
 		self.assertRaises(NotEnoughWordsError, get_random_words, wordlist=test_input, how_many=4)
