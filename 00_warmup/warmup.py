@@ -63,6 +63,7 @@ from exceptions import Exception
 import re
 import random
 import unittest
+import sys
 
 # Definicje wyjątków:
 
@@ -90,17 +91,26 @@ class NotEnoughWordsError(Exception):
 
 def get_path():
 	"""Pobiera od użytkownika ścieżkę pliku tekstowego.
-	Łatwo można zmienić sposób podawania pliku."""
-	try:
-		# importuję dopiero tutaj, żeby wygodniej obsłużyć możliwe wyjątki ;)
-		# tzn. może nie być biblioteki Tk lub ekranu graficznego
-		from Tkinter import Tk
-		from tkFileDialog import askopenfilename
-		Tk().withdraw()
-		filename = askopenfilename()
-	except:
-		# fallback do trybu tekstowego
-		filename = raw_input("Podaj ścieżkę do pliku: ")
+	Łatwo można zmienić sposób podawania pliku.
+	Można podać ścieżkę do pliku przez parametr.
+	Wyświetla krótką pomoc jeśli jako parametr podać --help"""
+	if len(sys.argv)>1:
+		if sys.argv[1] == '--help':
+			print "Usage:\n   %s [filename]" % sys.argv[0]
+			exit()
+		else:
+			filename = sys.argv[1]
+	else:
+		try:
+			# importuję dopiero tutaj, żeby wygodniej obsłużyć możliwe wyjątki ;)
+			# tzn. może nie być biblioteki Tk lub ekranu graficznego
+			from Tkinter import Tk
+			from tkFileDialog import askopenfilename
+			Tk().withdraw()
+			filename = askopenfilename()
+		except:
+			# fallback do trybu tekstowego
+			filename = raw_input("Podaj ścieżkę do pliku: ")
 	return filename
 
 def get_file_content(path):
