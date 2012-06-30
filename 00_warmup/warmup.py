@@ -97,10 +97,11 @@ def do_your_business():
 	content = get_file_content(path)
 	words = get_words(content)
 	randwords = get_random_words(words)
+	result = find_intersections(randwords)
+
 	print "*** Oto wylosowane wyrazy: "
 	for word in randwords:
 		print(word)
-	result = find_intersections(randwords)
 	if len(result)>0:
 		print "*** Część wspólna: "
 		for letter in result:
