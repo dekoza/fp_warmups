@@ -55,7 +55,7 @@ def get_path():
 	Łatwo można zmienić sposób podawania pliku."""
 	return raw_input("Podaj ścieżkę dostępu: ")
 
-def get_file_content(path=None):
+def get_file_content(path):
 	"""Wczytuje plik i zwraca jego zawartość w postaci łańcucha"""
 	if os.path.exists(path):
 		if os.path.isfile(path):
@@ -65,7 +65,7 @@ def get_file_content(path=None):
 	else:
 		raise FilePathError, "Nieprawidłowa ścieżka"
 
-def get_words(words=None, min_length=4, how_many=4):
+def get_words(words, min_length=4, how_many=4):
 	"""Usuwa słowa krótsze niż czteroliterowe ORAZ "wyrazy" zawierające niepoprawne znaki.
 	Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami."""
 	pattern = re.compile(r"\b[a-zA-Z]{%d,}\b" % min_length) # wykorzystuję wyrażenia regularne - lepiej się nie da :)
@@ -76,7 +76,7 @@ def get_words(words=None, min_length=4, how_many=4):
 		raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów \
 			(potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
 
-def get_random_words(wordlist=None, how_many=4):
+def get_random_words(wordlist, how_many=4):
 	"""Losuje kilka elementów z listy i zwraca jako listę."""
 	if len(wordlist)>=how_many:
 		return random.sample(wordlist,how_many)
@@ -87,9 +87,9 @@ def get_random_words(wordlist=None, how_many=4):
 		# powód jest prosty: zbyt mała liczba wyrazów zostanie wcześniej wyłapana w funkcji get_words :)
 
 
-def find_intersections(wordlist=None):
+def find_intersections(wordlist):
 	"""Znajduje część wspólną w wyrazach podanych poprzez listę i zwraca jako listę."""
-	data = [set(word.lower()) for word in wordlist] # korzystam z listy składanej
+	data = [set(word.lower()) for word in wordlist] # korzystam z listy składanej - zamieniam każdy wyraz na małe litery, przerabiam na zbiór i każdy ze zbiorów wrzucam jako element listy
 	return list(set.intersection(*data)) # zwraca listę zrobioną na podstawie zestawu zrobionego na podstawie rozpakowanej listy
 
 def do_your_business():
