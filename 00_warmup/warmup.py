@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 #coding: utf-8
 """Program zrobiony w stylu zbliżonym do overarchitectured.
 Pominięto definicje specjalistycznych typów danych - typy wbudowane w Pythona zupełnie wystarczają.
