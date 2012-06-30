@@ -122,6 +122,8 @@ def main():
 class TestWarmup(unittest.TestCase):
 	"""Klasa zawiera wyłącznie testy funkcji nie związanych z IO."""
 	def test_get_words(self):
+		self.assertRaises(TypeError, get_words)
+
 		test_input = "1 ala Ala ma kot h1"
 		expected_result = []
 		self.assertListEqual(get_words(test_input, min_length=4, how_many=0), expected_result)
@@ -134,6 +136,8 @@ class TestWarmup(unittest.TestCase):
 		self.assertRaises(NotEnoughCorrectWordsError, get_words, words=test_input,min_length=4, how_many=4)
 
 	def test_get_random_words(self):
+		self.assertRaises(TypeError, get_random_words)
+
 		test_input = ["Ala", 'ma', 'fajnego', 'kota']
 		self.assertListEqual(sorted(get_random_words(test_input, how_many=4)), sorted(test_input))
 
@@ -141,6 +145,8 @@ class TestWarmup(unittest.TestCase):
 		self.assertRaises(NotEnoughWordsError, get_random_words, wordlist=test_input, how_many=4)
 
 	def test_find_intersections(self):
+		self.assertRaises(TypeError, find_intersections)
+
 		test_input = ["Ala", "Agi"]
 		expected_result = ['a']
 		self.assertListEqual(find_intersections(test_input), expected_result)
