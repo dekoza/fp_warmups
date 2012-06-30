@@ -51,11 +51,12 @@ class NotEnoughWordsError(Exception):
 # funkcje realizujące zadanie
 
 def get_path():
-	"""Pobiera od użytkownika ścieżkę pliku tekstowego."""
+	"""Pobiera od użytkownika ścieżkę pliku tekstowego.
+	Łatwo można zmienić sposób podawania pliku."""
 	return raw_input("Podaj ścieżkę dostępu: ")
 
 def get_file_content(path=None):
-	"""Pobiera z pliku słowa i zwraca jako listę"""
+	"""Wczytuje plik i zwraca jego zawartość w postaci łańcucha"""
 	if os.path.exists(path):
 		if os.path.isfile(path):
 			return open(path).read()
@@ -66,21 +67,22 @@ def get_file_content(path=None):
 
 def get_words(words=None, min_length=4, how_many=4):
 	"""Usuwa słowa krótsze niż czteroliterowe ORAZ "wyrazy" zawierające niepoprawne znaki.
-	Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami.
-	"""
+	Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami."""
 	pattern = re.compile(r"\b[a-zA-Z]{%d,}\b" % min_length) # wykorzystuję wyrażenia regularne - lepiej się nie da :)
 	result = re.findall(pattern, words)
 	if len(result) >= how_many:
 		return result
 	else:
-		raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów (potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
+		raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów \
+			(potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
 
 def get_random_words(wordlist=None, how_many=4):
 	"""Losuje kilka elementów z listy i zwraca jako listę"""
 	if len(wordlist)>=how_many:
 		return random.sample(wordlist,how_many)
 	else:
-		raise NotEnoughWordsError, "Za mało wyrazów. Potrzeba co najmniej %(needed)d, otrzymano %(got)d." % {'needed': how_many, 'got': len(wordlist)}
+		raise NotEnoughWordsError, "Za mało wyrazów. Potrzeba co najmniej %(needed)d, \
+			otrzymano %(got)d." % {'needed': how_many, 'got': len(wordlist)}
 		# ten wyjątek normalnie nie powinien nigdy zostać zgłoszony w trakcie działania programu
 		# powód jest prosty: zbyt mała liczba wyrazów zostanie wcześniej wyłapana w funkcji get_words :)
 
