@@ -54,7 +54,17 @@ class NotEnoughWordsError(Exception):
 def get_path():
 	"""Pobiera od użytkownika ścieżkę pliku tekstowego.
 	Łatwo można zmienić sposób podawania pliku."""
-	return raw_input("Podaj ścieżkę dostępu: ")
+	try:
+		# importuję dopiero tutaj, żeby wygodniej obsłużyć możliwe wyjątki ;)
+		# tzn. może nie być biblioteki Tk lub ekranu graficznego
+		from Tkinter import Tk
+		from tkFileDialog import askopenfilename
+		Tk().withdraw()
+		filename = askopenfilename()
+	except:
+		# fallback do trybu tekstowego
+		filename = raw_input("Podaj ścieżkę do pliku: ")
+	return filename
 
 def get_file_content(path):
 	"""Wczytuje plik i zwraca jego zawartość w postaci łańcucha"""
