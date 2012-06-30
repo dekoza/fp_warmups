@@ -36,13 +36,16 @@ class FilePathError(Exception):
 	"""Niepoprawna ścieżka do pliku."""
 	pass
 
+
 class NotAFileError(Exception):
 	"""Ścieżka nie wskazuje na plik"""
 	pass
 
+
 class NotEnoughCorrectWordsError(Exception):
 	"""Plik nie zawiera dostatecznej liczby poprawnych wyrazów."""
 	pass
+
 
 class NotEnoughWordsError(Exception):
 	"""Plik nie zawiera dostatecznej liczby wyrazów."""
@@ -79,7 +82,8 @@ def get_file_content(path):
 def get_words(words, min_length=4, how_many=4):
 	"""Usuwa słowa krótsze niż czteroliterowe ORAZ "wyrazy" zawierające niepoprawne znaki.
 	Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami."""
-	pattern = re.compile(r"\b[a-zA-Z]{%d,}\b" % min_length) # wykorzystuję wyrażenia regularne - lepiej się nie da :)
+	# wykorzystuję wyrażenia regularne - lepiej się nie da :) przy okazji wykorzystuję locals(), by łatwo dostać się do potrzebnej zmiennej
+	pattern = re.compile(r"\b[a-zA-Z]{%(min_length)d,}\b" % locals())
 	result = re.findall(pattern, words)
 	if len(result) >= how_many:
 		return result
@@ -96,7 +100,6 @@ def get_random_words(wordlist, how_many=4):
 			otrzymano %(got)d." % {'needed': how_many, 'got': len(wordlist)}
 		# ten wyjątek normalnie nie powinien nigdy zostać zgłoszony w trakcie działania programu
 		# powód jest prosty: zbyt mała liczba wyrazów zostanie wcześniej wyłapana w funkcji get_words :)
-
 
 def find_intersections(wordlist):
 	"""Znajduje część wspólną w wyrazach podanych poprzez listę i zwraca jako listę."""
