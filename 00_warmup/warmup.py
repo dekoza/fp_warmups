@@ -52,8 +52,9 @@ NIEZGODNOŚCI ZE SPECYFIKACJĄ:
 
 
 ZNANE BŁĘDY:
-- Wyrazy nie mogą zawierać polskich liter (w pkt. 3 specyfikacji jest wyraźnie napisane, że używamy tylko alfabetu łacińskiego, ale dla własnej satysfakcji chcę to rozszerzyć)
-  Niestety póki co polskie znaki są traktowane jako delimitery i nie pomaga użycie flag UNICODE/LOCALE
+- RegExp nie traktuje polskich liter jak litery. Co prawda w pkt. 3 specyfikacji jest wyraźnie napisane,
+  że używamy tylko alfabetu łacińskiego, ale dla własnej satysfakcji chcę to rozszerzyć.
+  Niestety póki co polskie znaki są traktowane jako delimitery (wchodzą w skład grupy b) i nie pomaga użycie flag UNICODE/LOCALE
 
 
 Jak testować z użyciem unittest:
@@ -75,12 +76,12 @@ SETTINGS = {
 
 # importy
 
-import os
 from exceptions import Exception
 import re
 import random
 import unittest
 import argparse
+import locale
 
 # Definicje wyjątków:
 
@@ -91,11 +92,6 @@ class FilePathError(Exception):
 
 class NotAFileError(Exception):
     """Ścieżka nie wskazuje na plik"""
-    pass
-
-
-class NotEnoughCorrectWordsError(Exception):
-    """Plik nie zawiera dostatecznej liczby poprawnych wyrazów."""
     pass
 
 
@@ -140,40 +136,23 @@ def get_path():
 
 def get_file_content(path):
     """Wczytuje plik i zwraca jego zawartość w postaci łańcucha"""
-    if os.path.exists(path):
-        if os.path.isfile(path):
-            return open(path).read()
-        else:
-            raise NotAFileError, "Podany zasób nie jest plikiem"
-    else:
-        raise FilePathError, "Nieprawidłowa ścieżka"
+    return open(path).read()
 
-def get_words(words, min_word_length=None, min_words_picked=None):
+def get_words(words, min_word_length=None):
     """Usuwa słowa krótsze niż czteroliterowe ORAZ "wyrazy" zawierające niepoprawne znaki.
     Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami."""
-    if min_words_picked is None:
-        min_words_picked = SETTINGS.get('MIN_WORDS_PICKED')
-    if min_word_length is None:
-        min_word_length = SETTINGS.get('MIN_WORD_LENGTH')
-
     # wykorzystuję wyrażenia regularne
     # przy okazji wykorzystuję locals(), by łatwo dostać się do potrzebnej zmiennej
     # ostatni parametr TEORETYCZNIE wyklucza polskie znaki z grupy \b
-    pattern = re.compile(r"\b[a-zA-Z]{%(min_word_length)d,}\b" % locals(), re.U|re.L)
-    result = re.findall(pattern, words)
-    if len(result) >= min_words_picked:
-        return result
-    else:
-        raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów (potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':min_words_picked, 'got': len(result)}
+    pattern = re.compile(ur"\b[a-zA-Z]{%(min_word_length)d,}\b" % locals(), re.U|re.L)
+    return re.findall(pattern, words)
 
 def get_random_words(wordlist, min_words_picked=None):
     """Losuje kilka elementów z listy i zwraca jako listę."""
-    if min_words_picked is None:
-        min_words_picked = SETTINGS.get('MIN_WORDS_PICKED')
     if len(wordlist)>=min_words_picked:
         return random.sample(wordlist,min_words_picked)
     else:
-        raise NotEnoughWordsError, "Za mało wyrazów. Potrzeba co najmniej %(needed)d, otrzymano %(got)d." % {'needed': min_words_picked, 'got': len(wordlist)}
+        raise NotEnoughWordsError("Za mało wyrazów. Potrzeba co najmniej {needed}, otrzymano {got}.".format(needed=min_words_picked, got=len(wordlist)))
         # ten wyjątek normalnie nie powinien nigdy zostać zgłoszony w trakcie działania programu
         # powód jest prosty: zbyt mała liczba wyrazów zostanie wcześniej wyłapana w funkcji get_words :)
 
@@ -186,8 +165,8 @@ def find_intersections(wordlist):
 def do_your_business():
     path = get_path()
     content = get_file_content(path)
-    words = get_words(content)
-    randwords = get_random_words(words)
+    words = get_words(content,min_word_length=SETTINGS['MIN_WORD_LENGTH'])
+    randwords = get_random_words(words, min_words_picked=SETTINGS['MIN_WORDS_PICKED'])
     result = find_intersections(randwords)
 
     print "*** Oto wylosowane wyrazy: "
@@ -201,10 +180,9 @@ def do_your_business():
         print "*** Wyrazy nie mają części wspólnej"
 
 def main():
+    locale.setlocale(locale.LC_ALL, '') # ustawia język zgodnie z ustawieniami systemu operacyjnego; dzięki temu standardowe błędy też będą po polsku
     try:
         do_your_business()
-    except IOError:
-        print "Błąd otwarcia pliku"
     except Exception, e:
         print e
 
@@ -217,14 +195,11 @@ class TestWarmup(unittest.TestCase):
 
         test_input = "1 ala Ala ma kot h1"
         expected_result = []
-        self.assertListEqual(get_words(test_input, min_word_length=4, min_words_picked=0), expected_result)
+        self.assertListEqual(get_words(test_input, min_word_length=4), expected_result)
 
         test_input = "NIkto 1 ala Aleksandra ma kota h1123123 234234"
         expected_result = ['NIkto', 'Aleksandra', 'kota']
-        self.assertListEqual(get_words(test_input, min_word_length=4, min_words_picked=0), expected_result)
-
-        test_input = "1 ala Aleksandra ma kota h1"
-        self.assertRaises(NotEnoughCorrectWordsError, get_words, words=test_input,min_word_length=4, min_words_picked=4)
+        self.assertListEqual(get_words(test_input, min_word_length=4), expected_result)
 
     def test_get_random_words(self):
         self.assertRaises(TypeError, get_random_words)
