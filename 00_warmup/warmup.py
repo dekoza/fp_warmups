@@ -138,10 +138,14 @@ def get_file_content(path):
     else:
         raise FilePathError, "Nieprawidłowa ścieżka"
 
-def get_words(words, min_length=SETTINGS['MIN_LENGTH'], how_many=SETTINGS['HOW_MANY']):
+def get_words(words, min_length=None, how_many=None):
     """Usuwa słowa krótsze niż czteroliterowe ORAZ "wyrazy" zawierające niepoprawne znaki.
     Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami."""
     # wykorzystuję wyrażenia regularne - lepiej się nie da :) przy okazji wykorzystuję locals(), by łatwo dostać się do potrzebnej zmiennej
+    if how_many is None:
+        how_many = SETTINGS.get('HOW_MANY')
+    if min_length is None:
+        min_length = SETTINGS.get('MIN_LENGTH')
     pattern = re.compile(r"\b[a-zA-Z]{%(min_length)d,}\b" % locals())
     result = re.findall(pattern, words)
     if len(result) >= how_many:
@@ -149,8 +153,10 @@ def get_words(words, min_length=SETTINGS['MIN_LENGTH'], how_many=SETTINGS['HOW_M
     else:
         raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów (potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
 
-def get_random_words(wordlist, how_many=SETTINGS['HOW_MANY']):
+def get_random_words(wordlist, how_many=None):
     """Losuje kilka elementów z listy i zwraca jako listę."""
+    if how_many is None:
+        how_many = SETTINGS.get('HOW_MANY')
     if len(wordlist)>=how_many:
         return random.sample(wordlist,how_many)
     else:
