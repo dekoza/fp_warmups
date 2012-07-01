@@ -89,11 +89,19 @@ class NotEnoughWordsError(Exception):
 
 # funkcje realizujące zadanie
 
-def get_path(args):
+def parse_arguments():
+    import argparse
+    parser = argparse.ArgumentParser(description="Randomly pick some words from a file and display common letters.")
+    parser.add_argument('file', metavar='FILE', help="File to play with. If ommited, you will be asked for a path.", nargs='?', default=None)
+    args = parser.parse_args()
+    return args
+
+def get_path():
     """Pobiera od użytkownika ścieżkę pliku tekstowego.
     Łatwo można zmienić sposób podawania pliku.
     Można podać ścieżkę do pliku przez parametr.
     Wyświetla krótką pomoc jeśli jako parametr podać --help"""
+    args = parse_arguments()
     if args.file is not None:
         filename = args.file
     else:
@@ -144,8 +152,8 @@ def find_intersections(wordlist):
     data = [set(word.lower()) for word in wordlist] # korzystam z listy składanej - zamieniam każdy wyraz na małe litery, przerabiam na zbiór i każdy ze zbiorów wrzucam jako element listy
     return list(set.intersection(*data)) # zwraca listę elementów należących do części wspólnej zbiorów rozpakowanych z listy :)
 
-def do_your_business(args):
-    path = get_path(args)
+def do_your_business():
+    path = get_path()
     content = get_file_content(path)
     words = get_words(content)
     randwords = get_random_words(words)
@@ -161,9 +169,9 @@ def do_your_business(args):
     else:
         print "Wyrazy nie mają części wspólnej"
 
-def main(args):
+def main():
     try:
-        do_your_business(args)
+        do_your_business()
     except IOError:
         print "Błąd otwarcia pliku"
     except Exception, e:
@@ -212,8 +220,4 @@ class TestWarmup(unittest.TestCase):
 # Beam me up, Scotty
 
 if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser(description="Randomly pick some words from a file and display common letters.")
-    parser.add_argument('file', metavar='FILE', help="File to play with. If ommited, you will be asked for a path.", nargs='?', default=None)
-    args = parser.parse_args()
-    main(args)
+    main()
