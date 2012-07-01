@@ -64,6 +64,13 @@ from exceptions import Exception
 import re
 import random
 import unittest
+import argparse
+
+# domyślna konfiguracja
+SETTINGS = {
+    'MIN_LENGTH': 4,        # minimalna długość słowa
+    'HOW_MANY': 4,          # minimalna liczba słów
+}
 
 # Definicje wyjątków:
 
@@ -90,17 +97,21 @@ class NotEnoughWordsError(Exception):
 # funkcje realizujące zadanie
 
 def parse_arguments():
-    import argparse
-    parser = argparse.ArgumentParser(description="Randomly pick some words from a file and display common letters.")
-    parser.add_argument('file', metavar='FILE', help="File to play with. If ommited, you will be asked for a path.", nargs='?', default=None)
+    """Umożliwia podanie ścieżki do pliku przez parametr.
+    Zmienia domyślną konfigurację (na czas wykonania) w zależności od podanych parametrów."""
+    parser = argparse.ArgumentParser(description="Randomly pick some words from a file and display common letters")
+    parser.add_argument('file', metavar='FILE', help="File to play with; if ommited, you will be asked for a path", nargs='?', default=None)
+    parser.add_argument('-l', '--min-length', metavar='L', type=int, help="Minimum length of a word (default: {})".format(SETTINGS['MIN_LENGTH']), default=SETTINGS['MIN_LENGTH'])
+    parser.add_argument('-w', '--how-many', metavar='N', type=int, help="How many words should be picked (default: {})".format(SETTINGS['HOW_MANY']), default=SETTINGS['HOW_MANY'])
     args = parser.parse_args()
+    # nie jestem pewny, czy to w dobrym guście, ale pasuje do Zen :)
+    SETTINGS['MIN_LENGTH'] = args.min_length
+    SETTINGS['HOW_MANY'] = args.how_many
     return args
 
 def get_path():
     """Pobiera od użytkownika ścieżkę pliku tekstowego.
-    Łatwo można zmienić sposób podawania pliku.
-    Można podać ścieżkę do pliku przez parametr.
-    Wyświetla krótką pomoc jeśli jako parametr podać --help"""
+    Łatwo można zmienić sposób podawania pliku."""
     args = parse_arguments()
     if args.file is not None:
         filename = args.file
@@ -127,7 +138,7 @@ def get_file_content(path):
     else:
         raise FilePathError, "Nieprawidłowa ścieżka"
 
-def get_words(words, min_length=4, how_many=4):
+def get_words(words, min_length=SETTINGS['MIN_LENGTH'], how_many=SETTINGS['HOW_MANY']):
     """Usuwa słowa krótsze niż czteroliterowe ORAZ "wyrazy" zawierające niepoprawne znaki.
     Jako argument przyjmuje łańcuch i zwraca listę z oczekiwanymi wyrazami."""
     # wykorzystuję wyrażenia regularne - lepiej się nie da :) przy okazji wykorzystuję locals(), by łatwo dostać się do potrzebnej zmiennej
@@ -138,7 +149,7 @@ def get_words(words, min_length=4, how_many=4):
     else:
         raise NotEnoughCorrectWordsError, "Plik zawiera za mało poprawnych wyrazów (potrzeba co najmniej %(needed)d, otrzymano %(got)d)" % {'needed':how_many, 'got': len(result)}
 
-def get_random_words(wordlist, how_many=4):
+def get_random_words(wordlist, how_many=SETTINGS['HOW_MANY']):
     """Losuje kilka elementów z listy i zwraca jako listę."""
     if len(wordlist)>=how_many:
         return random.sample(wordlist,how_many)
